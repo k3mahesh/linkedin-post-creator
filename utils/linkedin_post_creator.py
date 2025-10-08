@@ -1,4 +1,3 @@
-from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, Field
 from typing import Literal, List, Dict
 from langchain_ollama import ChatOllama, OllamaEmbeddings
@@ -28,7 +27,6 @@ CHUNK_OVERLAP = 100
 CHROMA_DIR = "./chroma_db"
 LINKED_IN_POST_LOC= "/tmp" 
 
-mcp = FastMCP(name="linkedin-post-creator")
 
 BLOG_FEEDS_URL = {
     "kubernetes": "https://kubernetes.io/feed.xml",
@@ -216,35 +214,3 @@ def write_post_to_file(linked_in_post: str) -> bool:
     except Exception as e:
         logging.exception(e)
         return False
-
-
-# @mcp.tool()
-# def create_linked_post(req: LinkedPostRequest) -> LinkedPostResponse:
-#     """
-#     MCP Tool: Generates a linked blog post summary
-#     by combining Kubernetes + AWS blog feeds.
-#     """
-#     try:
-#         # trigger_words = ["linked", "post", "k8s", "aws", "kubernetes"]
-#         # if any(word in req for word in trigger_words):
-#         linked_post = generate_linked_post(req.query)
-#         logging.info("Linked Post has been generated")
-#         write_post_to_file(linked_post)
-
-#         return LinkedPostResponse(
-#             status="success",
-#             message="Linked post generated successfully.",
-#             linked_post=linked_post,
-#         )
-#     except Exception as e:
-#         return LinkedPostResponse(
-#             status="error",
-#             message=f"Failed to generate linked post: {e}",
-#             linked_post=None,
-#         )
-    
-if __name__ == "__main__":
-    # mcp.run(transport='stdio')
-    query = "Write a linkedin post of latest updates k8s"
-    linked_post_generate = generate_linked_post(query=query)
-    write_post_to_file(linked_post_generate)
