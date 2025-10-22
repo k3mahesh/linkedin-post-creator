@@ -15,7 +15,7 @@ jobs:
       packages: write
 
     env:
-      IMAGE_NAME: linkedIn-post-creator
+      IMAGE_NAME: linkedin-post-creator
       PYTHON_VERSION: "3.11"
       # PATH: "/root/.cargo/bin:/root/.local/bin:$PATH"
 
