@@ -19,14 +19,13 @@ logging.basicConfig(
               logging.StreamHandler()]
               )
 
-LLM_MODEL_URL = "http://localhost:11434"
-LLM_MODEL = "gemma:2b"
+LLM_MODEL_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434")
+LLM_MODEL = os.getenv("OLLAMA_MODEL", "gemma:2b")
 LLM_MODEL_TEMP = 0.7
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 100
 CHROMA_DIR = "./chroma_db"
-LINKED_IN_POST_LOC= "/tmp" 
-
+LINKED_IN_POST_LOC= "/tmp"
 
 BLOG_FEEDS_URL = {
     "kubernetes": "https://kubernetes.io/feed.xml",
@@ -84,7 +83,8 @@ def chunk_documents(documents: List[Document]) -> List[Document]:
 
 def build_vector_db(documents: List[Document]) -> Chroma:
     """Create a Chroma vector DB from documents and persist it locally."""
-    embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    embeddings = OllamaEmbeddings(model="nomic-embed-text",
+                                  base_url=LLM_MODEL_URL)
 
     if os.path.exists(CHROMA_DIR):
         logging.info("Removing old Chroma database...")
@@ -97,11 +97,17 @@ def build_vector_db(documents: List[Document]) -> Chroma:
 
 def setup_chain() -> LLMChain:
     """Setup LangChain with Ollama LLM and prompt template."""
-    llm = ChatOllama(
-        base_url=LLM_MODEL_URL, 
-        model=LLM_MODEL,
-        temperature=0.7,
-    )
+    try:
+        logging.info(f"Connecting to LLM model '{LLM_MODEL}' at: {LLM_MODEL_URL}")
+        llm = ChatOllama(
+            base_url=LLM_MODEL_URL, 
+            model=LLM_MODEL,
+            temperature=0.7,
+        )
+    except Exception as e:
+        connection_url = f"{LLM_MODEL_URL}/api/chat"
+        logging.exception(f"⚠️ Failed to connect to {connection_url}: {e}")
+        raise
 
     prompt = PromptTemplate(
         input_variables=["context", "links"],
