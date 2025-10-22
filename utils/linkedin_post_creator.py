@@ -19,7 +19,7 @@ logging.basicConfig(
               logging.StreamHandler()]
               )
 
-LLM_MODEL_URL = os.getenv("OLLAMA_URL", "http://host.docker.internal:11434")
+LLM_MODEL_URL = os.getenv("OLLAMA_URL", "http://localhost:11434")
 LLM_MODEL = os.getenv("OLLAMA_MODEL", "gemma:2b")
 LLM_MODEL_TEMP = 0.7
 CHUNK_SIZE = 500

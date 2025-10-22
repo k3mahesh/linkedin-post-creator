@@ -1,5 +1,4 @@
 FROM python:3.11-slim
-# FROM llamaedge/gemma-2b:latest
 
 WORKDIR /app
 
@@ -16,8 +15,7 @@ COPY . .
 RUN uv sync --frozen
 
 ENV OLLAMA_URL=http://host.docker.internal:11434
-ENV GEMMA_MODEL=gemma:2b
+ENV OLLAMA_MODEL=gemma:2b
 ENV PYTHONUNBUFFERED=1
 
-ENTRYPOINT ["uv", "run", "python", "cli.py"]
-# CMD ["bash", "-c", "ollama run gemma:2b && uv run python cli.py"]
+ENTRYPOINT ["uv", "run", "python", "mcp_server_remote.py"]
